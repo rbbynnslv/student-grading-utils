@@ -1,3 +1,4 @@
+# Using ubuntu as image
 FROM ubuntu
 
 RUN apt-get update && apt-get install -yq libgconf-2-4
@@ -28,10 +29,8 @@ RUN npm install puppeteer@1.11.0 --save-dev
 
 VOLUME /student-grading-utils
 
-
 ADD ${reference_image} .
 COPY /bin/$checker /bin/
 CMD chmod +x bin/$checker
-
 
 ENTRYPOINT ./bin/$checker
