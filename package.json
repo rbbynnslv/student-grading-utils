@@ -23,7 +23,7 @@
     "jasmine": "^3.4.0",
     "pixelmatch": "^4.0.2",
     "pngjs": "^3.4.0",
-    "puppeteer": "^1.11.0",
+    "puppeteer": "^1.14.0",
     "yargs": "^13.2.2"
   }
 }

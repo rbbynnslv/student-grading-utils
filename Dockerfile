@@ -1,21 +1,13 @@
-# Using ubuntu as image
-FROM ubuntu
+FROM node:11-alpine
 
-RUN apt-get update && apt-get install -yq libgconf-2-4
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
+    apk add -U --no-cache --allow-untrusted tzdata chromium ttf-freefont wqy-zenhei ca-certificates && \
+    mkdir -p /app /logs && \
+    yarn global add pm2 && \
+    yarn cache clean && \
+    rm -rf /var/cache/apk/*
 
-RUN apt-get -y install curl gnupg \
-    && apt-get install -y wget \
-    && rm -rf /var/lib/apt/lists/* \
-    && curl -sL https://deb.nodesource.com/setup_11.x  | bash - \
-    && apt-get -y install nodejs
-
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
-    && apt-get update \
-    && apt-get install -y google-chrome-unstable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf \
-      --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
-
+RUN /bin/sh -c "apk add --no-cache bash"
 
 WORKDIR /student-grading-utils
 COPY . /student-grading-utils
@@ -24,8 +16,7 @@ RUN npm install
 # RUN npm i --production
 
 RUN npm install puppeteer-core chrome-aws-lambda --save-prod
-RUN npm install puppeteer@1.11.0 --save-dev
-
+RUN npm install puppeteer@1.14.0 --save-dev
 
 VOLUME /student-grading-utils
 
