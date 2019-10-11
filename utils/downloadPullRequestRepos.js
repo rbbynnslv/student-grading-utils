@@ -36,20 +36,20 @@ const config = {
 
 async function downloadRepoArchives(outputDir, archConfigs) {
   archConfigs.forEach(async config => {
-      const outputPath = path.resolve(
-        outputDir,
-        `${config.owner}_${config.repo}.tar.gz`
-      );
-      try{
-       return repoArchive = await github.repos.getArchiveLink(config)
-      }catch(e){
-        console.error(`Repository of ${config.owner} cannot be found!`)
-      }finally{
-        if(typeof repoArchive !== 'undefined'){
+    const outputPath = path.resolve(
+      outputDir,
+      `${config.owner}_${config.repo}.tar.gz`
+    );
+    try {
+      return repoArchive = await github.repos.getArchiveLink(config)
+    } catch (e) {
+      console.error(`Repository of ${config.owner} cannot be found!`)
+    } finally {
+      if (typeof repoArchive !== 'undefined') {
         await writeFileAsync(outputPath, repoArchive.data);
         console.log(outputPath)
-        }
       }
+    }
   });
 }
 
@@ -61,7 +61,7 @@ function parseRepoUrl(url) {
   };
 }
 
-(async function({ repo, branch, outputDir }) {
+(async function ({ repo, branch, outputDir }) {
   console.error(
     'Downloaded repositories will be placed in: ',
     path.resolve(outputDir)
@@ -87,7 +87,19 @@ function parseRepoUrl(url) {
       };
     });
 
-    await downloadRepoArchives(outputDir, prRepos);
+    let records = fs.readFileSync('/home/webdev/Desktop/student-grading-utils/students.txt', 'utf8'); //Url is static
+    let hasStudents = parseInt(records.length) > 0 ? true : false;
+    let studentsLength = parseInt(records.length);
+
+    if (hasStudents) {
+      var students = records.toString().split("\n");
+      for (i = 0; i < studentsLength; i++) {
+        var result = prRepos.filter(obj => obj.owner === students[i]);
+        await downloadRepoArchives(outputDir, result);
+      }
+    } else {
+      await downloadRepoArchives(outputDir, prRepos);
+    }
   } catch (e) {
     console.error(e);
     process.exitCode = 1;
